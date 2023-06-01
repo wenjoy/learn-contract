@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-
+import { artifacts } from 'hardhat'
 // @ts-ignore
 import { BN, expectEvent, expectRevert } from '@openzeppelin/test-helpers'
 
