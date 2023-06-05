@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "./IERC721.sol";
+import "./IERC721Receiver.sol";
 
 contract ERC721 is IERC721 {
     struct NFT {
@@ -15,13 +16,16 @@ contract ERC721 is IERC721 {
     mapping(uint256 => NFT) tokens;
 
     modifier validAddress(address _owner) {
-        require(_owner != address(0), "assign to zero address is not allowed");
+        require(
+            _owner != address(0),
+            "ERC721: address zero is not a valid owner"
+        );
         _;
     }
 
     modifier valideToken(uint256 _tokenId) {
         NFT memory nft = tokens[_tokenId];
-        require(nft.tokenId != 0, "invalid token id");
+        require(nft.tokenId != 0, "ERC721: invalid token ID");
         _;
     }
 
@@ -53,7 +57,9 @@ contract ERC721 is IERC721 {
     }
 
     /// @notice find owner of NFT
-    function ownerOf(uint256 _tokenId) external view returns (address) {
+    function ownerOf(
+        uint256 _tokenId
+    ) external view valideToken(_tokenId) returns (address) {
         return tokens[_tokenId].owner;
     }
 
@@ -68,13 +74,15 @@ contract ERC721 is IERC721 {
         require(owner == _from, "You don't have authority");
         //TODO approver check
         tokens[_tokenId].owner = _to;
+        tokens[_tokenId].approved = address(0);
+
         NFT[] storage fromNFTs = entries[_from];
         NFT[] storage toNFTs = entries[_to];
 
-        uint len = fromNFTs.length;
+        uint i = fromNFTs.length;
 
-        for (uint i = len - 1; i > 0; i--) {
-            NFT storage fromNFT = fromNFTs[i];
+        while (i > 0) {
+            NFT storage fromNFT = fromNFTs[i - 1];
             fromNFTs.pop();
 
             if (fromNFT.tokenId == _tokenId) {
@@ -82,11 +90,44 @@ contract ERC721 is IERC721 {
             } else {
                 fromNFTs.push(fromNFT);
             }
+            i--;
         }
-        console.log("debug: ", _tokenId);
 
-        //TODO: handle data bytes
-        // require(data.length != 0, "data is required");
+        emit Transfer(_from, _to, _tokenId);
+    }
+
+    function _checkOnERC721Received(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) private returns (bool) {
+        if (to.code.length > 0) {
+            try
+                IERC721Receiver(to).onERC721Received(
+                    msg.sender,
+                    from,
+                    tokenId,
+                    data
+                )
+            returns (bytes4 retval) {
+                return retval == IERC721Receiver.onERC721Received.selector;
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert(
+                        "ERC721: transfer to non ERC721Receiver implementer"
+                    );
+                } else {
+                    /// @solidity memory-safe-assembly
+                    // assembly {
+                    //   revert(add(32, reason), mload(reason))
+                    // }
+                    return false;
+                }
+            }
+        } else {
+            return true;
+        }
     }
 
     function safeTransferFrom(
@@ -96,6 +137,10 @@ contract ERC721 is IERC721 {
         bytes memory data
     ) external payable validAddress(_to) {
         _transferFrom(_from, _to, _tokenId, data);
+        require(
+            _checkOnERC721Received(_from, _to, _tokenId, data),
+            "ERC721: transfer to non ERC721Receiver implements"
+        );
     }
 
     /// @notice Overload of above one

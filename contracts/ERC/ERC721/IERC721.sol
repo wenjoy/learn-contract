@@ -6,19 +6,19 @@ pragma solidity ^0.8.0;
 ///@author Wen Jun
 interface IERC721 {
     event Transfer(
-        address indexed _from,
-        address indexed _to,
-        uint256 indexed _tokenId
+        address indexed from,
+        address indexed to,
+        uint256 indexed tokenId
     );
     event Approval(
-        address indexed _owner,
-        address indexed _approved,
-        uint256 indexed _tokenId
+        address indexed owner,
+        address indexed approved,
+        uint256 indexed tokenId
     );
     event ApprovalForAll(
-        address indexed _owner,
-        address indexed _operator,
-        bool _approved
+        address indexed owner,
+        address indexed operator,
+        bool approved
     );
 
     /// @notice Count all NFTs assigned to an owner
