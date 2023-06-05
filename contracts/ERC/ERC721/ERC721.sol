@@ -15,6 +15,8 @@ contract ERC721 is IERC721 {
     mapping(address => mapping(address => bool)) approval;
     mapping(uint256 => NFT) tokens;
 
+    constructor() {}
+
     modifier validAddress(address _owner) {
         require(
             _owner != address(0),
@@ -29,7 +31,7 @@ contract ERC721 is IERC721 {
         _;
     }
 
-    function mint(address _owner, uint256 _tokenId) external {
+    function mint(address _owner, uint256 _tokenId) internal {
         //TODO: authentication
         NFT memory newNFT = NFT({
             tokenId: _tokenId,
@@ -41,7 +43,7 @@ contract ERC721 is IERC721 {
         //TODO:emit event
     }
 
-    function burn(uint256 _tokenId) external {
+    function burn(uint256 _tokenId) internal {
         delete tokens[_tokenId];
     }
 
