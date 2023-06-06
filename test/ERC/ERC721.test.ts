@@ -63,6 +63,12 @@ contract('ERC721', ([owner, other]) => {
       await token.mint(owner, SECOND_TOKEN_ID)
     })
 
+    describe('name', () => {
+      it('return name of contract', async () => {
+        expect(await token.name()).to.be.equal('MyToken')
+      })
+    })
+
     describe('balanceOf', () => {
       context('when the given address owns some tokens', () => {
         it('returns the amount of tokens owned by the given address', async () => {

@@ -7,7 +7,7 @@ contract MyNFT is ERC721 {
     using Counters for Counters.Counter;
     Counters.Counter private currentTokenId;
 
-    constructor() ERC721() {}
+    constructor() ERC721("WenjoyOwnNFT1", "NFT") {}
 
     function mintTo(address to) public returns (uint256) {
         currentTokenId.increment();

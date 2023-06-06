@@ -3,10 +3,12 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "./IERC721.sol";
+import "./IERC721MetaData.sol";
 import "../ERC165/ERC165.sol";
 import "./IERC721Receiver.sol";
+import "./IERC721MetaData.sol";
 
-contract ERC721 is IERC721, ERC165 {
+contract ERC721 is IERC721, IERC721Metadata, ERC165 {
     struct NFT {
         uint256 tokenId;
         address owner;
@@ -15,6 +17,30 @@ contract ERC721 is IERC721, ERC165 {
     mapping(address => NFT[]) entries;
     mapping(address => mapping(address => bool)) approval;
     mapping(uint256 => NFT) tokens;
+    string _name;
+    string _symbol;
+    mapping(uint256 => string) tokenURIs;
+
+    constructor(string memory __name, string memory __symbol) {
+        _name = __name;
+        _symbol = __symbol;
+    }
+
+    function setTokenURI(uint256 _tokenId, string calldata _tokenURI) external {
+        tokenURIs[_tokenId] = _tokenURI;
+    }
+
+    function name() external view returns (string memory) {
+        return _name;
+    }
+
+    function symbol() external view returns (string memory) {
+        return _symbol;
+    }
+
+    function tokenURI(uint256 _tokenId) external view returns (string memory) {
+        return tokenURIs[_tokenId];
+    }
 
     modifier validAddress(address _owner) {
         require(
@@ -39,7 +65,7 @@ contract ERC721 is IERC721, ERC165 {
         });
         tokens[_tokenId] = newNFT;
         entries[_owner].push(newNFT);
-        //TODO:emit event
+        emit Transfer(address(0), _owner, _tokenId);
     }
 
     function burn(uint256 _tokenId) public {
@@ -201,6 +227,7 @@ contract ERC721 is IERC721, ERC165 {
         console.logBytes4(interfaceId);
         return
             interfaceId == type(IERC721).interfaceId ||
+            interfaceId == type(IERC721Metadata).interfaceId ||
             super.supportsInterface(interfaceId);
     }
 }
