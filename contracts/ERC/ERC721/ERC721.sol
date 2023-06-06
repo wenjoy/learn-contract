@@ -3,9 +3,10 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "./IERC721.sol";
+import "../ERC165/ERC165.sol";
 import "./IERC721Receiver.sol";
 
-contract ERC721 is IERC721 {
+contract ERC721 is IERC721, ERC165 {
     struct NFT {
         uint256 tokenId;
         address owner;
@@ -14,8 +15,6 @@ contract ERC721 is IERC721 {
     mapping(address => NFT[]) entries;
     mapping(address => mapping(address => bool)) approval;
     mapping(uint256 => NFT) tokens;
-
-    constructor() {}
 
     modifier validAddress(address _owner) {
         require(
@@ -31,7 +30,7 @@ contract ERC721 is IERC721 {
         _;
     }
 
-    function mint(address _owner, uint256 _tokenId) internal {
+    function mint(address _owner, uint256 _tokenId) public {
         //TODO: authentication
         NFT memory newNFT = NFT({
             tokenId: _tokenId,
@@ -43,7 +42,7 @@ contract ERC721 is IERC721 {
         //TODO:emit event
     }
 
-    function burn(uint256 _tokenId) internal {
+    function burn(uint256 _tokenId) public {
         delete tokens[_tokenId];
     }
 
@@ -174,7 +173,7 @@ contract ERC721 is IERC721 {
         nft.approved = _approved;
     }
 
-    function setApprovaleForAll(address _operator, bool _approved) external {
+    function setApprovalForAll(address _operator, bool _approved) external {
         //TODO: authorized?
         approval[msg.sender][_operator] = _approved;
 
@@ -193,5 +192,15 @@ contract ERC721 is IERC721 {
         address _operator
     ) external view returns (bool) {
         return approval[_owner][_operator];
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    ) public view override returns (bool) {
+        console.logBytes4(type(IERC721).interfaceId);
+        console.logBytes4(interfaceId);
+        return
+            interfaceId == type(IERC721).interfaceId ||
+            super.supportsInterface(interfaceId);
     }
 }

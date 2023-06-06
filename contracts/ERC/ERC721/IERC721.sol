@@ -52,7 +52,7 @@ interface IERC721 {
 
     function approve(address _approved, uint256 _tokenId) external payable;
 
-    function setApprovaleForAll(address _operator, bool _approved) external;
+    function setApprovalForAll(address _operator, bool _approved) external;
 
     function getApproved(uint256 _tokenId) external view returns (address);
 

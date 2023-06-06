@@ -3,7 +3,8 @@ import { artifacts, contract } from 'hardhat'
 // @ts-ignore
 import { BN, expectRevert, expectEvent } from '@openzeppelin/test-helpers'
 
-const ERC721 = artifacts.require("ERC721")
+const ERC721 = artifacts.require("contracts/ERC/ERC721/ERC721.sol:ERC721")
+
 const ERC721ReceiverMock = artifacts.require("ERC721ReceiverMock")
 
 contract.skip("ERC721", ([owner, receipt]) => {
@@ -166,6 +167,12 @@ contract('ERC721', ([owner, other]) => {
             })
           })
         })
+      })
+    })
+
+    describe('support ERC165', () => {
+      it('should detect that support ERC721 interface', async () => {
+        expect(await token.supportsInterface('0x80ac58cd')).to.be.true;
       })
     })
   });
