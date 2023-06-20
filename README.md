@@ -1,13 +1,16 @@
-# Sample Hardhat Project
+# Implement my own ERC contract
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+## ERC20
+## ERC721
+## ERC165
 
-Try running some of the following tasks:
+# How to use
+## test
+adapt `@nomiclabs/hardhat-truffle5` plugin to enable truffle style test, easy deploy contract in test, no need to compile
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+### run one special test
+`npx hardhat test test/ERC/ERC20.test.ts`
+
+## deploy 
+ERC721 can run `npx hardhat deploy` to deploy directly, thanks to costumize script `scripts/nft.ts`
+`mint` need to change contract address in `.env`
