@@ -16,7 +16,7 @@ contract ERC20 is IERC20 {
 
     modifier sufficientBalance(address _from, uint256 _value) {
         uint256 balance = balanceOf(_from);
-        require(balance >= _value, "blance is insufficient");
+        require(balance >= _value, "ERC20: balance is insufficient");
         _;
     }
 
@@ -24,6 +24,12 @@ contract ERC20 is IERC20 {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
+    }
+
+    function _mint(address _to, uint256 _value) public {
+        require(_to != address(0), "ERC20: cannot mint to invlaid address");
+        balances[_to] = _value;
+        totalSupply += _value;
     }
 
     function balanceOf(address _owner) public view returns (uint256 balance) {
