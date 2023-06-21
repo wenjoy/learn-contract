@@ -10,6 +10,7 @@ async function main() {
   const token = await Token.deploy("Wenjoy Token", "WJTK", 18)
   await token.deployed()
   console.log('deployed to: ', token.address)
+  //contract address on sopolia: 0x0FB63Ab7354E08666A4bFb0051CEa797FB6E0154
 
   console.log('name: ', await token.name())
   console.log('symbol: ', await token.symbol())
