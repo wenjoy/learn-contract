@@ -18,7 +18,9 @@ ERC721 can run `npx hardhat deploy` to deploy directly, thanks to costumize scri
 
 ### ERC20
 - deploy
-`npx hardhat run --network localhost scripts/deploy-erc20.ts`
+check `.env`, if NETWORK is not specified, use localhost (hard code in `helpers.ts`) as default provider, for testnet, fill it with `sepolia`
+`npx hardhat run scripts/deploy-erc20.ts`
+
 - verify
 after verify, can be indentified as ERC20 token on Etherscan and display Token name
 `npx hardhat verify 0x0FB63Ab7354E08666A4bFb0051CEa797FB6E0154 "Wenjoy Token" "WJTK" 18 --network sepolia`
