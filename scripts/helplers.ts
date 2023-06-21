@@ -14,7 +14,7 @@ const getEnvVariable = (key: string, defaultValue?: string): string => {
 }
 
 const getProvider = () => {
-  return ethers.getDefaultProvider(getEnvVariable('NETWORK', 'sepolia'), {
+  return ethers.getDefaultProvider(getEnvVariable('NETWORK', 'http://localhost:8545'), {
     alchemy: getEnvVariable('ALCHEMY_API_KEY')
   })
 }
